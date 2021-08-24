@@ -70,14 +70,6 @@ public class MainController {
 		private String role;
 	}
 
-	@GetMapping("/profile")
-	@PreAuthorize("isAuthenticated()")
-	public User getUserProfile() {
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = service.getByEmail(email);
-		return user;
-	}
-
 	@PostMapping("/authenticate")
 	public ResponseEntity<?> authenticate(@RequestBody TokenRequestBody request) throws AuthenticatedException {
 		String email = request.getEmail();

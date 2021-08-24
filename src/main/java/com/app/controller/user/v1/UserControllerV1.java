@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +24,22 @@ import com.app.service.user.UserService;
 public class UserControllerV1 implements UserController {
 	@Autowired
 	private UserService service;
+
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<?> getUserProfile() {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = service.getByEmail(email);
+		return ResponseEntity.status(HttpStatus.OK).body(user);
+	}
+
+	@Override
+	public ResponseEntity<?> getObject(Long id) {
+		User user = service.getObjectById(id);
+		String[] withFields = new String[] { User_.FIRST_NAME, User_.LAST_NAME, User_.CREATED_DATE, User_.AGE,
+				User_.EMAIL };
+		return ResponseEntity.status(HttpStatus.OK).body(Mapper.toMapValue(user, withFields));
+	}
 
 	@Override
 	public ResponseEntity<?> addUserSharedPost(Long id, Post post) {
@@ -42,12 +60,6 @@ public class UserControllerV1 implements UserController {
 	}
 
 	@Override
-	public ResponseEntity<?> getObject(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public ResponseEntity<?> createObject(User dto) {
 		// TODO Auto-generated method stub
 		return null;
@@ -55,9 +67,8 @@ public class UserControllerV1 implements UserController {
 
 	@Override
 	public ResponseEntity<?> updateObject(Long id, User dto) {
-		dto.setId(id);
-		User result = Mapper.toObjectIgnoreFields(dto, User_.PASSWORD, User_.FIRST_NAME);
-//		User result = service.updateObject(dto);
+		String[] ignoreFields = new String[] { User_.PASSWORD, User_.EMAIL, User_.ROLE, User_.ID };
+		User result = service.updateObject(id, Mapper.toObjectIgnoreFields(dto, ignoreFields));
 		return ResponseEntity.status(HttpStatus.OK).body(result);
 	}
 

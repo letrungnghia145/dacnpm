@@ -93,8 +93,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	}
 
 	@Override
-	public User updateObject(User object) {
-		User oldUser = userRepository.findById(object.getId()).orElseThrow();
+	public User updateObject(Long id, User object) {
+		User oldUser = userRepository.findById(id).orElseThrow();
 		return Mapper.convert(oldUser, object);
 	}
 

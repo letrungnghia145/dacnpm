@@ -3,6 +3,7 @@ package com.app.exception.handler;
 import java.util.Date;
 import java.util.NoSuchElementException;
 
+import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -46,13 +47,18 @@ public class AppExceptionHandler {
 		return new Message(exception.getMessage(), request.getContextPath(), new Date());
 	}
 
-	@ExceptionHandler(Exception.class)
+
+	@ExceptionHandler(HibernateException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public Message getOthesrException(Exception exception, WebRequest request) {
-		return new Message(exception.getMessage(), request.getContextPath(), new Date());
-	}
+	public Message getHibernateException(Exception exception, WebRequest request) {
+		return new Message("could not execute statement", request.getContextPath(), new Date());
+	}	
 	
-	
+//	@ExceptionHandler(Exception.class)
+//	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//	public Message getOthesrException(Exception exception, WebRequest request) {
+//		return new Message(exception.getMessage(), request.getContextPath(), new Date());
+//	}
 //	@ExceptionHandler(ExpiredJwtException.class)
 //	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 //	public Message getExpiredJwtException(Exception exception, WebRequest request) {

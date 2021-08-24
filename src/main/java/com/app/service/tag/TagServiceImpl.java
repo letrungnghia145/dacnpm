@@ -41,7 +41,7 @@ public class TagServiceImpl implements TagService {
 	}
 
 	@Override
-	public Tag updateObject(Tag object) {
+	public Tag updateObject(Long id, Tag object) {
 		// TODO Auto-generated method stub
 		return null;
 	}

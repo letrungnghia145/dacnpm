@@ -1,6 +1,5 @@
 package com.app.helper;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,6 +54,29 @@ public class Mapper {
 		return to;
 	}
 
+	@Deprecated
+	public static <T> T convertIgnoreFields(T to, T from, String...ignoreFields) {
+		T newFrom = toObjectIgnoreFields(from, ignoreFields);
+		Class<? extends Object> clazz = to.getClass();
+		Method[] declaredMethods = clazz.getMethods();
+		for (Method method : declaredMethods) {
+			String name = method.getName();
+			boolean isCollection = Collection.class.isAssignableFrom(method.getReturnType());
+			if (name.startsWith("get") && !isCollection && !name.equals("getClass")) {
+				try {
+					Object value = method.invoke(newFrom);
+					Method setter = clazz.getMethod(name.replace("get", "set"), method.getReturnType());
+					if (value != null) {
+						setter.invoke(to, value);
+					}
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		return to;
+	}
+
 	public static <T> T toObjectIgnoreFields(T object, String... ignoreFields) {
 		Class<? extends Object> clazz = object.getClass();
 		for (String ignoreField : ignoreFields) {
@@ -64,7 +86,7 @@ public class Mapper {
 				Method method = clazz.getMethod("set" + s, type);
 				method.invoke(object, (Object) null);
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 			}
 		}
 		return object;

@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public Post updateObject(Post object) {
+	public Post updateObject(Long id, Post object) {
 		return postRepository.save(object);
 	}
 

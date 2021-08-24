@@ -28,7 +28,7 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 @JsonIgnoreProperties({ "commentsWithPost", "postedPosts", "interestingTags", "sharedPosts", "votedPosts" })
-//@JsonSerialize(using = UserSerialize.class)
+@JsonSerialize(using = UserSerialize.class)
 public class User extends AbstractModel {
 //	private Account account;
 	private String firstName;

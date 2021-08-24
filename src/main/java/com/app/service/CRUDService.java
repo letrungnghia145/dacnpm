@@ -14,7 +14,7 @@ public interface CRUDService<O, ID> {
 	public O getObjectById(ID id);
 
 	@Transactional
-	public O updateObject(O object);
+	public O updateObject(ID id, O object);
 
 	@Transactional
 	public void deleteObjectById(ID id);

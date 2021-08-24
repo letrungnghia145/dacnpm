@@ -80,7 +80,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	public Comment updateObject(Comment object) {
+	public Comment updateObject(Long id, Comment object) {
 		// TODO Auto-generated method stub
 		return null;
 	}

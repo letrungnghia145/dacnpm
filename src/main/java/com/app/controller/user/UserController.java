@@ -13,7 +13,10 @@ import com.app.controller.CRUDController;
 import com.app.model.post.Post;
 import com.app.model.user.User;
 
-public interface UserController extends CRUDController<User, Long>{
+public interface UserController extends CRUDController<User, Long> {
+	@GetMapping("/profile")
+	public ResponseEntity<?> getUserProfile();
+
 	@PostMapping("/{id}/posts/shared")
 	public ResponseEntity<?> addUserSharedPost(@PathVariable Long id, @RequestBody Post post);
 
