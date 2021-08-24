@@ -11,6 +11,10 @@ public interface TagRepository extends JpaRepository<Tag, Long>, JpaSpecificatio
 
 	@Modifying
 	@Query("update Tag t set t.currentPostIndex = t.currentPostIndex + 1 where t = ?1")
-	public void updateCurrentPostIndex(Tag tag);
+	public void inscreaseCurrentPostIndex(Tag tag);
+
+	@Modifying
+	@Query("update Tag t set t.currentPostIndex = t.currentPostIndex - 1 where t = ?1")
+	public void decreaseCurrentPostIndex(Tag tag);
 
 }

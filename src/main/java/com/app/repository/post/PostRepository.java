@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificat
 
 	@EntityGraph(attributePaths = { "voters" })
 	public Optional<Post> findPostWithVotersById(Long id);
-	
-	@EntityGraph(attributePaths = {"comments", "comments.replies"})
-	public void deleteById(Long id);
+
+	@EntityGraph(attributePaths = { "tags", "comments", "comments.replies" })
+	public Optional<Post> findPostToDeleteById(Long id);
 }

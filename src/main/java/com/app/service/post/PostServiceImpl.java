@@ -35,7 +35,7 @@ public class PostServiceImpl implements PostService {
 	public Post createObject(Post object) {
 		Post post = postRepository.save(object);
 		post.getTags().forEach(tag -> {
-			tagRepository.updateCurrentPostIndex(tag);
+			tagRepository.inscreaseCurrentPostIndex(tag);
 		});
 		return post;
 	}
@@ -58,7 +58,11 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void deleteObjectById(Long id) {
-		postRepository.deleteById(id);
+		Post post = postRepository.findPostToDeleteById(id).orElseThrow();
+		post.getTags().forEach(tag -> {
+			tagRepository.decreaseCurrentPostIndex(tag);
+		});
+		postRepository.delete(post);
 	}
 
 	@Override
