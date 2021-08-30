@@ -75,8 +75,9 @@ public class Filter<T> {
 						.castToReturnType(value.substring(1, value.length() - 1).split(","), field.getJavaType())));
 			};
 		case Operator.LIKE:
-
-			break;
+			return (root, cq, cb) -> {
+				return cb.like(root.get(attribute), value);
+			};
 		case Operator.BETTWEEN:
 			return (root, cq, cb) -> {
 				String[] values = value.substring(1, value.length() - 1).split(",");

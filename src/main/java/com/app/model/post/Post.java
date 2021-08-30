@@ -40,6 +40,10 @@ public class Post extends AbstractModel {
 	private User author;
 	@Column(columnDefinition = "text")
 	private String content;
+	private String keyword;
+	private String notifyEmail;
+	
+	
 	@ManyToMany
 	@JoinTable(name = "post_voter", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> voters = new HashSet<>();

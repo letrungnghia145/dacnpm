@@ -11,7 +11,7 @@ import com.app.service.CRUDService;
 
 public interface UserService extends CRUDService<User, Long> {
 	@Transactional
-	public User doRegister(String payload, String inputCode) throws Exception;
+	public User doRegister(String token, String inputCode) throws Exception;
 
 	public User getByEmail(String username);
 
@@ -19,4 +19,11 @@ public interface UserService extends CRUDService<User, Long> {
 	public Post addUserSharedPost(Long id, Post post);
 
 	public List<Post> getUserSharedPosts(Long id, Map<String, String> filters);
+
+	public List<Post> getUserPosts(Long id, Map<String, String> filters);
+
+	@Transactional
+	public User changePassword(String token, String inputCode, String password) throws Exception;
+
+	public boolean isExistUser(String email);
 }

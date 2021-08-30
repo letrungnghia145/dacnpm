@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
@@ -17,9 +18,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.app.exception.RegistrationException;
+import com.app.config.constant.AppConstant;
+import com.app.exception.ValidateTokenException;
 import com.app.helper.Mapper;
 import com.app.helper.token.TokenUtils;
 import com.app.model.post.Post;
@@ -39,6 +42,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	private PostRepository postRepository;
 	@Autowired
 	private ObjectMapper mapper;
+	@Autowired
+	private PasswordEncoder encoder;
 
 	private UserDetails toUserDetails(User user) {
 		Set<GrantedAuthority> authorities = new HashSet<>();
@@ -60,20 +65,37 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		}
 	}
 
-	@Override
-	public User doRegister(String payload, String inputCode) throws Exception {
-		Map<String, Object> information = TokenUtils.getInfomationFromToken(payload);
-		User user = mapper.convertValue(information.get("user"), User.class);
-		String validationCode = (String) information.get("validationCode");
-		Long expiredDate = (Long) information.get("expiredDate");
-		System.out.println(user.getPassword());
+	private static <R> R validateAndExecute(String token, String inputCode, Function<Map<String, Object>, R> func)
+			throws Exception {
+		Map<String, Object> information = TokenUtils.getInfomationFromToken(token);
+		String validationCode = (String) information.get(AppConstant.VALIDATION_CODE);
+		Long expiredDate = (Long) information.get(TokenUtils.EXPIRED_DATE_KEY);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> payload = (Map<String, Object>) information.get("payload");
 		if (new Date().before(new Date(expiredDate)) && validationCode.equals(inputCode)) {
-			user.setRole(Role.ROLE_USER);
-			return this.createObject(user);
+			return func.apply(payload);
 		} else {
-			throw new RegistrationException(!inputCode.equals(validationCode) ? "Invalid code!" : "Expired code!");
+			throw new ValidateTokenException(!inputCode.equals(validationCode) ? "Invalid code!" : "Expired code!");
 		}
-//		return this.createObject(user);
+	}
+
+	@Override
+	public User doRegister(String token, String inputCode) throws Exception {
+		return validateAndExecute(token, inputCode, (payload) -> {
+			User user = mapper.convertValue(payload, User.class);
+			user.setPassword(encoder.encode(user.getPassword()));
+			user.setRole(Role.ROLE_USER);
+			return createObject(user);
+		});
+	}
+
+	@Override
+	public User changePassword(String token, String inputCode, String password) throws Exception {
+		return validateAndExecute(token, inputCode, (payload) -> {
+			User user = userRepository.findByEmail((String) payload.get(User_.EMAIL)).orElseThrow();
+			user.setPassword(encoder.encode(password));
+			return user;
+		});
 	}
 
 	@Override
@@ -125,5 +147,21 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 			return cb.and(cb.equal(user.get(User_.ID), id), cb.isMember(post, sharedPosts));
 		};
 		return postRepository.findAll(specification.and(filter.getSpecification()));
+	}
+
+	@Override
+	public List<Post> getUserPosts(Long id, Map<String, String> filters) {
+		Filter<Post> filter = new Filter<>(filters);
+		Specification<Post> specification = (post, cq, cb) -> {
+			Root<User> user = cq.from(User.class);
+			Expression<List<Post>> posts = user.get(User_.POSTED_POSTS);
+			return cb.and(cb.equal(user.get(User_.ID), id), cb.isMember(post, posts));
+		};
+		return postRepository.findAll(specification.and(filter.getSpecification()));
+	}
+
+	@Override
+	public boolean isExistUser(String email) {
+		return userRepository.countUsersWithEmail(email) > 0;
 	}
 }

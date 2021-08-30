@@ -1,6 +1,7 @@
 package com.app.controller.user;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,4 +23,14 @@ public interface UserController extends CRUDController<User, Long> {
 
 	@GetMapping("/{id}/posts/shared")
 	public ResponseEntity<?> getUserSharedPosts(@PathVariable Long id, @RequestParam Map<String, String> filters);
+
+	@GetMapping("/{id}/posts/posted")
+	public ResponseEntity<?> getUserPosts(@PathVariable Long id, @RequestParam Map<String, String> filters);
+
+	@PostMapping("/edit/password")
+	public ResponseEntity<?> changeUserPassword(@RequestBody Map<String, Object> request) throws Exception;
+
+	@PostMapping("/edit/password/confirm")
+	public ResponseEntity<?> confirmChangePassword(@RequestBody Map<String, Optional<String>> request) throws Exception;
+
 }

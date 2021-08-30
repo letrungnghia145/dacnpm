@@ -27,6 +27,7 @@ public class UserSerialize extends StdSerializer<User> {
 			gen.writeNumberField(User_.ID, value.getId());
 		}
 		gen.writeStringField(User_.EMAIL, value.getEmail());
+		gen.writeStringField(User_.PHONE, value.getPhone());
 		gen.writeStringField(User_.FIRST_NAME, value.getFirstName());
 		gen.writeStringField(User_.LAST_NAME, value.getLastName());
 		gen.writeNumberField(User_.AGE, value.getAge());
