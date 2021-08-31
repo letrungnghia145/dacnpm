@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.constant.url.BaseURL;
 import com.app.controller.comment.CommentController;
+import com.app.helper.Filter;
 import com.app.helper.Mapper;
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Comment;
 import com.app.model.user.User;
 import com.app.model.user.User_;
@@ -31,7 +33,8 @@ public class CommentControllerV1 implements CommentController {
 
 	@Override
 	public ResponseEntity<?> getCommentReplies(Long id, Map<String, String> filters) {
-		List<Comment> replies = service.getCommentReplies(id, filters);
+		Filter<Comment> filter = new Filter<>(filters);
+		Pagination replies = service.getCommentReplies(id, filter.getSpecification(), filter.getPageable());
 		return ResponseEntity.status(HttpStatus.OK).body(replies);
 	}
 
@@ -43,9 +46,12 @@ public class CommentControllerV1 implements CommentController {
 
 	@Override
 	public ResponseEntity<?> getCommentVoters(Long id, Map<String, String> filters) {
-		List<User> voters = service.getCommentVoters(id, filters);
-		List<Map<String, Object>> result = Mapper.toMapValues(voters, User_.ID, User_.FIRST_NAME, User_.LAST_NAME);
-		return ResponseEntity.status(HttpStatus.OK).body(result);
+		Filter<User> filter = new Filter<>(filters);
+		Pagination voters = service.getCommentVoters(id, filter.getSpecification(), filter.getPageable());
+		List<Map<String, Object>> result = Mapper.toMapValues(voters.getData(), User_.ID, User_.FIRST_NAME,
+				User_.LAST_NAME);
+		voters.setData(result);
+		return ResponseEntity.status(HttpStatus.OK).body(voters);
 	}
 
 	@Override

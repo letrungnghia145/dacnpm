@@ -1,6 +1,5 @@
 package com.app.controller.user.v1;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,7 +15,9 @@ import com.app.config.constant.AppConstant;
 import com.app.config.constant.url.BaseURL;
 import com.app.controller.user.UserController;
 import com.app.helper.AuthUtils;
+import com.app.helper.Filter;
 import com.app.helper.Mapper;
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Post;
 import com.app.model.user.User;
 import com.app.model.user.User_;
@@ -53,20 +54,24 @@ public class UserControllerV1 implements UserController {
 
 	@Override
 	public ResponseEntity<?> getUserSharedPosts(Long id, Map<String, String> filters) {
-		List<Post> sharedPosts = service.getUserSharedPosts(id, filters);
+		Filter<Post> filter = new Filter<>(filters);
+		Pagination sharedPosts = service.getUserSharedPosts(id, filter.getSpecification(), filter.getPageable());
 		return ResponseEntity.status(HttpStatus.OK).body(sharedPosts);
 	}
 
 	@Override
 	public ResponseEntity<?> getUserPosts(Long id, Map<String, String> filters) {
-		List<Post> posts = service.getUserPosts(id, filters);
+		Filter<Post> filter = new Filter<>(filters);
+		Pagination posts = service.getUserPosts(id, filter.getSpecification(), filter.getPageable());
 		return ResponseEntity.status(HttpStatus.OK).body(posts);
 	}
 
 	@Override
 	public ResponseEntity<?> getAllObjects(Map<String, String> filters) {
-		List<User> users = service.getAllObjects(filters);
-		return ResponseEntity.status(HttpStatus.OK).body(Mapper.toMapValues(users, userWithFields));
+		Filter<User> filter = new Filter<>(filters);
+		Pagination allObjects = service.getAllObjects(filter.getSpecification(), filter.getPageable());
+		allObjects.setData(Mapper.toMapValues(allObjects.getData(), userWithFields));
+		return ResponseEntity.status(HttpStatus.OK).body(allObjects);
 	}
 
 	@Override

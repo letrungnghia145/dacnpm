@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.constant.url.BaseURL;
 import com.app.controller.post.PostController;
+import com.app.helper.Filter;
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Comment;
 import com.app.model.post.Post;
 import com.app.model.user.User;
@@ -27,8 +29,9 @@ public class PostControllerV1 implements PostController {
 
 	@Override
 	public ResponseEntity<?> getAllObjects(Map<String, String> filters) {
-		List<Post> posts = service.getAllObjects(filters);
-		return ResponseEntity.status(HttpStatus.OK).body(posts);
+		Filter<Post> filter = new Filter<>(filters);
+		Pagination allObjects = service.getAllObjects(filter.getSpecification(), filter.getPageable());
+		return ResponseEntity.status(HttpStatus.OK).body(allObjects);
 	}
 
 	@Override
@@ -57,7 +60,8 @@ public class PostControllerV1 implements PostController {
 
 	@Override
 	public ResponseEntity<?> getPostComments(Long id, Map<String, String> filters) {
-		List<Comment> comments = service.getPostComments(id, filters);
+		Filter<Comment> filter = new Filter<>(filters);
+		Pagination comments = service.getPostComments(id, filter.getSpecification(), filter.getPageable());
 		return ResponseEntity.status(HttpStatus.OK).body(comments);
 	}
 
@@ -75,17 +79,20 @@ public class PostControllerV1 implements PostController {
 
 	@Override
 	public ResponseEntity<?> getPostVoters(Long id, Map<String, String> filters) {
-		List<User> voters = service.getPostVoters(id, filters);
+		Filter<User> filter = new Filter<>(filters);
+		Pagination voters = service.getPostVoters(id, filter.getSpecification(), filter.getPageable());
 		List<Map<String, Object>> result = new ArrayList<>();
-		voters.forEach(voter -> {
+		voters.getData().forEach(voter -> {
+			User user = (User) voter;
 			Map<String, Object> map = new HashMap<>();
-			map.put(User_.ID, voter.getId());
-			map.put("name", voter.getFirstName() + " " + voter.getLastName());
+			map.put(User_.ID, user.getId());
+			map.put("name", user.getFirstName() + " " + user.getLastName());
 			result.add(map);
 		});
-		return ResponseEntity.status(HttpStatus.OK).body(result);
+		voters.setData(result);
+		return ResponseEntity.status(HttpStatus.OK).body(voters);
 	}
-	
+
 	@Override
 	public ResponseEntity<?> deleteAllByIds(Map<String, List<Long>> map) {
 		service.deleteAllById(map.get("ids"));

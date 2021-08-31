@@ -1,6 +1,5 @@
 package com.app.controller.tag.v1;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.config.constant.url.BaseURL;
 import com.app.controller.tag.TagController;
+import com.app.helper.Filter;
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Post;
 import com.app.model.tag.Tag;
 import com.app.service.tag.TagService;
@@ -23,7 +24,8 @@ public class TagControllerV1 implements TagController {
 
 	@Override
 	public ResponseEntity<?> getAllObjects(Map<String, String> filters) {
-		List<Tag> tags = service.getAllObjects(filters);
+		Filter<Tag> filter = new Filter<>(filters);
+		Pagination tags = service.getAllObjects(filter.getSpecification(), filter.getPageable());
 		return ResponseEntity.status(HttpStatus.OK).body(tags);
 	}
 
@@ -53,7 +55,8 @@ public class TagControllerV1 implements TagController {
 
 	@Override
 	public ResponseEntity<?> getTagPosts(Long id, Map<String, String> filters) {
-		List<Post> posts = service.getTagPosts(id, filters);
+		Filter<Post> filter = new Filter<>(filters);
+		Pagination posts = service.getTagPosts(id, filter.getSpecification(), filter.getPageable());
 		return ResponseEntity.status(HttpStatus.OK).body(posts);
 	}
 }

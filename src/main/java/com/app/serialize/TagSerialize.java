@@ -23,9 +23,9 @@ public class TagSerialize extends StdSerializer<Tag> {
 	@Override
 	public void serialize(Tag value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		gen.writeStartObject();
-		gen.writeNumberField(Tag_.ID, value.getId());
+		gen.writeObjectField(Tag_.ID, value.getId());
 		gen.writeStringField(Tag_.NAME, value.getName());
-		gen.writeNumberField(Tag_.CURRENT_POST_INDEX, value.getCurrentPostIndex());
+		gen.writeObjectField(Tag_.CURRENT_POST_INDEX, value.getCurrentPostIndex());
 		gen.writeObjectField(Tag_.CREATED_DATE, value.getCreatedDate());
 		gen.writeObjectField(Tag_.MODIFIED_DATE, value.getModifiedDate());
 		gen.writeEndObject();

@@ -26,7 +26,7 @@ public class CommentSerialize extends StdSerializer<Comment> {
 	public void serialize(Comment value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
 		gen.writeStartObject();
-		gen.writeNumberField(Comment_.ID, value.getId());
+		gen.writeObjectField(Comment_.ID, value.getId());
 		gen.writeStringField(Comment_.CONTENT, value.getContent());
 		gen.writeObjectField(Comment_.AUTHOR,
 				Mapper.toMapValue(value.getAuthor(), User_.ID, User_.FIRST_NAME, User_.LAST_NAME));

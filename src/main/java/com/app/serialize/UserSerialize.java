@@ -23,14 +23,12 @@ public class UserSerialize extends StdSerializer<User> {
 	@Override
 	public void serialize(User value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		gen.writeStartObject();
-		if (value.getId()!=null) {
-			gen.writeNumberField(User_.ID, value.getId());
-		}
+		gen.writeObjectField(User_.ID, value.getId());
 		gen.writeStringField(User_.EMAIL, value.getEmail());
 		gen.writeStringField(User_.PHONE, value.getPhone());
 		gen.writeStringField(User_.FIRST_NAME, value.getFirstName());
 		gen.writeStringField(User_.LAST_NAME, value.getLastName());
-		gen.writeNumberField(User_.AGE, value.getAge());
+		gen.writeObjectField(User_.AGE, value.getAge());
 		gen.writeObjectField(User_.ROLE, value.getRole());
 		gen.writeObjectField(User_.PASSWORD, value.getPassword());
 		gen.writeObjectField(User_.CREATED_DATE, value.getCreatedDate());

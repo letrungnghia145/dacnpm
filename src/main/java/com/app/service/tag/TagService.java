@@ -1,12 +1,13 @@
 package com.app.service.tag;
 
-import java.util.List;
-import java.util.Map;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Post;
 import com.app.model.tag.Tag;
 import com.app.service.CRUDService;
 
 public interface TagService extends CRUDService<Tag, Long> {
-	public List<Post> getTagPosts(Long id, Map<String, String> filters);
+	public Pagination getTagPosts(Long id, Specification<Post> specification, Pageable pagination);
 }

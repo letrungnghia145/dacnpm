@@ -12,6 +12,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.app.config.constant.AppConstant;
 import com.app.exception.ValidateTokenException;
 import com.app.helper.Mapper;
+import com.app.helper.pagination.Pagination;
 import com.app.helper.token.TokenUtils;
 import com.app.model.post.Post;
 import com.app.model.user.Role;
@@ -31,7 +33,6 @@ import com.app.model.user.User;
 import com.app.model.user.User_;
 import com.app.repository.post.PostRepository;
 import com.app.repository.user.UserRepository;
-import com.app.service.Filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -104,9 +105,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	}
 
 	@Override
-	public List<User> getAllObjects(Map<String, String> filters) {
-		Filter<User> filter = new Filter<>(filters);
-		return userRepository.findAll(filter.getSpecification());
+	public Pagination getAllObjects(Specification<User> filters, Pageable pagination) {
+		List<User> data = userRepository.findAll(filters, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = userRepository.count(filters);
+		return new Pagination(data, page, limit, total, Optional.of("users"));
 	}
 
 	@Override
@@ -139,25 +143,33 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 	}
 
 	@Override
-	public List<Post> getUserSharedPosts(Long id, Map<String, String> filters) {
-		Filter<Post> filter = new Filter<>(filters);
-		Specification<Post> specification = (post, cq, cb) -> {
+	public Pagination getUserSharedPosts(Long id, Specification<Post> specification, Pageable pagination) {
+		Specification<Post> spec = (post, cq, cb) -> {
 			Root<User> user = cq.from(User.class);
 			Expression<List<Post>> sharedPosts = user.get(User_.SHARED_POSTS);
 			return cb.and(cb.equal(user.get(User_.ID), id), cb.isMember(post, sharedPosts));
 		};
-		return postRepository.findAll(specification.and(filter.getSpecification()));
+		Specification<Post> combine = spec.and(specification);
+		List<Post> data = postRepository.findAll(combine, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = postRepository.count(combine);
+		return new Pagination(data, page, limit, total, Optional.of("posts"));
 	}
 
 	@Override
-	public List<Post> getUserPosts(Long id, Map<String, String> filters) {
-		Filter<Post> filter = new Filter<>(filters);
-		Specification<Post> specification = (post, cq, cb) -> {
+	public Pagination getUserPosts(Long id, Specification<Post> specification, Pageable pagination) {
+		Specification<Post> spec = (post, cq, cb) -> {
 			Root<User> user = cq.from(User.class);
 			Expression<List<Post>> posts = user.get(User_.POSTED_POSTS);
 			return cb.and(cb.equal(user.get(User_.ID), id), cb.isMember(post, posts));
 		};
-		return postRepository.findAll(specification.and(filter.getSpecification()));
+		Specification<Post> combine = spec.and(specification);
+		List<Post> data = postRepository.findAll(combine, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = postRepository.count(combine);
+		return new Pagination(data, page, limit, total, Optional.of("posts"));
 	}
 
 	@Override

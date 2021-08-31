@@ -1,5 +1,7 @@
 package com.app;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
@@ -7,8 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.app.model.post.Post;
+import com.app.repository.post.PostRepository;
 import com.app.repository.tag.TagRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,7 +28,7 @@ public class DacnpmApplication implements CommandLineRunner {
 	@Autowired
 	private PasswordEncoder encoder;
 	@Autowired
-	private TagRepository repository;
+	private PostRepository repository;
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -39,5 +47,11 @@ public class DacnpmApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 //		configureObjectMapper(objectMapper);
 //		repository.updateCurrentPostIndex(new Tag(1L));
+//
+//		Page<Post> findAll = repository.findAll(Specification.where(null),
+//				PageRequest.of(0, 3).withSort(Sort.by("id").descending()));
+//		findAll.forEach(post -> {
+//			System.out.println(post.getId());
+//		});
 	}
 }

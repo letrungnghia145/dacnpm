@@ -1,21 +1,22 @@
 package com.app.service.tag;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Post;
 import com.app.model.tag.Tag;
 import com.app.model.tag.Tag_;
 import com.app.repository.post.PostRepository;
 import com.app.repository.tag.TagRepository;
-import com.app.service.Filter;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -30,9 +31,12 @@ public class TagServiceImpl implements TagService {
 	}
 
 	@Override
-	public List<Tag> getAllObjects(Map<String, String> filters) {
-		Filter<Tag> filter = new Filter<>(filters);
-		return tagRepository.findAll(filter.getSpecification());
+	public Pagination getAllObjects(Specification<Tag> filters, Pageable pagination) {
+		List<Tag> data = tagRepository.findAll(filters, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = tagRepository.count(filters);
+		return new Pagination(data, page, limit, total, Optional.of("tags"));
 	}
 
 	@Override
@@ -53,14 +57,18 @@ public class TagServiceImpl implements TagService {
 	}
 
 	@Override
-	public List<Post> getTagPosts(Long id, Map<String, String> filters) {
-		Filter<Post> filter = new Filter<>(filters);
-		Specification<Post> specification = (post, cq, cb) -> {
+	public Pagination getTagPosts(Long id, Specification<Post> specification, Pageable pagination) {
+		Specification<Post> spec = (post, cq, cb) -> {
 			Root<Tag> tag = cq.from(Tag.class);
 			Expression<List<Post>> tagPosts = tag.get(Tag_.POSTS);
 			return cb.and(cb.equal(tag.get(Tag_.ID), id), cb.isMember(post, tagPosts));
 		};
-		return postRepository.findAll(specification.and(filter.getSpecification()));
+		Specification<Post> combine = spec.and(specification);
+		List<Post> data = postRepository.findAll(combine, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = postRepository.count(combine);
+		return new Pagination(data, page, limit, total, Optional.of("posts"));
 	}
 
 }

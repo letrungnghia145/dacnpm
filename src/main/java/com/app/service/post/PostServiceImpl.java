@@ -1,15 +1,17 @@
 package com.app.service.post;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.app.helper.pagination.Pagination;
 import com.app.model.post.Comment;
 import com.app.model.post.Post;
 import com.app.model.post.Post_;
@@ -18,7 +20,6 @@ import com.app.repository.comment.CommentRepository;
 import com.app.repository.post.PostRepository;
 import com.app.repository.tag.TagRepository;
 import com.app.repository.user.UserRepository;
-import com.app.service.Filter;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -41,9 +42,12 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Post> getAllObjects(Map<String, String> filters) {
-		Filter<Post> filter = new Filter<>(filters);
-		return postRepository.findAll(filter.getSpecification());
+	public Pagination getAllObjects(Specification<Post> specification, Pageable pagination) {
+		List<Post> data = postRepository.findAll(specification, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = postRepository.count(specification);
+		return new Pagination(data, page, limit, total, Optional.of("posts"));
 	}
 
 	@Override
@@ -66,15 +70,18 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<Comment> getPostComments(Long id, Map<String, String> filters) {
-		Filter<Comment> filter = new Filter<>(filters);
-		Specification<Comment> specification = (comment, cq, cb) -> {
+	public Pagination getPostComments(Long id, Specification<Comment> specification, Pageable pagination) {
+		Specification<Comment> spec = (comment, cq, cb) -> {
 			Root<Post> post = cq.from(Post.class);
 			Expression<List<Comment>> postComments = post.get(Post_.COMMENTS);
 			return cb.and(cb.equal(post.get(Post_.ID), id), cb.isMember(comment, postComments));
 		};
-		List<Comment> comments = commentRepository.findAll(specification.and(filter.getSpecification()));
-		return comments;
+		Specification<Comment> combine = spec.and(specification);
+		List<Comment> data = commentRepository.findAll(combine, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = commentRepository.count(combine);
+		return new Pagination(data, page, limit, total, Optional.of("comments"));
 	}
 
 	@Override
@@ -94,15 +101,19 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-	public List<User> getPostVoters(Long id, Map<String, String> filters) {
-		Filter<User> filter = new Filter<>(filters);
-		Specification<User> specification = (user, query, cb) -> {
+	public Pagination getPostVoters(Long id, Specification<User> specification, Pageable pagination) {
+		Specification<User> spec = (user, query, cb) -> {
 			Root<Post> post = query.from(Post.class);
 			Expression<List<User>> postVoters = post.get(Post_.VOTERS);
 			return cb.and(cb.equal(post.get(Post_.ID), id), cb.isMember(user, postVoters));
 
 		};
-		return userRepository.findAll(specification.and(filter.getSpecification()));
+		Specification<User> combine = spec.and(specification);
+		List<User> data = userRepository.findAll(combine, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = userRepository.count(combine);
+		return new Pagination(data, page, limit, total, Optional.of("users"));
 	}
 
 	@Override

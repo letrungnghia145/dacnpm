@@ -1,15 +1,16 @@
 package com.app.service;
 
-import java.util.List;
-import java.util.Map;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.app.helper.pagination.Pagination;
 
 public interface CRUDService<O, ID> {
 	@Transactional
 	public O createObject(O object);
 
-	public List<O> getAllObjects(Map<String, String> filters);
+	public Pagination getAllObjects(Specification<O> specification, Pageable pagination);
 
 	public O getObjectById(ID id);
 

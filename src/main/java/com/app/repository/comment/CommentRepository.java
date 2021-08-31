@@ -1,8 +1,9 @@
 package com.app.repository.comment;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, JpaSpec
 	public Optional<Comment> findCommentWithRepliesById(Long id);
 
 	@EntityGraph(attributePaths = { "author" })
-	public List<Comment> findAll(Specification<Comment> specification);
+	public Page<Comment> findAll(Specification<Comment> specification, Pageable pageable);
 
 	@EntityGraph(attributePaths = { "voters" })
 	public Optional<Comment> findCommentWithVotersById(Long id);
