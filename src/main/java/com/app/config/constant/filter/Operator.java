@@ -9,4 +9,5 @@ public class Operator {
 	public static final String IN = "in";
 	public static final String LIKE = "like";
 	public static final String BETTWEEN = "between";
+	public static final String NOT_IN = "not";
 }

@@ -53,16 +53,10 @@ public class Post extends AbstractModel {
 	private Set<User> sharers = new HashSet<>();
 
 	@JsonCreator
-	public Post(String title, String content, Optional<Long> userId, Optional<List<Long>> tagIds) {
+	public Post(String title, String content, User user, Set<Tag> tags) {
 		this.title = title;
 		this.content = content;
-		userId.ifPresent(id -> {
-			this.author = new User(id);
-		});
-		tagIds.ifPresent(ids -> {
-			ids.forEach(tagId -> {
-				this.tags.add(new Tag(tagId));
-			});
-		});
+		this.author = user;
+		this.tags = tags;
 	}
 }
