@@ -18,7 +18,6 @@ import com.app.model.post.Comment;
 import com.app.model.user.User;
 import com.app.model.user.User_;
 import com.app.service.comment.CommentService;
-
 @RestController
 @RequestMapping(BaseURL.COMMENT_BASE_URL_V1)
 public class CommentControllerV1 implements CommentController {

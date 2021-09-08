@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.app.model.post.Post;
+import com.app.model.post.Post_;
 import com.app.repository.post.PostRepository;
 import com.app.repository.tag.TagRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,5 +54,13 @@ public class DacnpmApplication implements CommandLineRunner {
 //		findAll.forEach(post -> {
 //			System.out.println(post.getId());
 //		});
+//		Specification<Post> specification = Specification.<Post>where((root, cq, cb) -> {
+//			return cb.equal(root.get(Post_.ID), 20L);
+//		}).or((root, cq, cb) -> {
+//			return cb.equal(root.get(Post_.ID), 10L);
+//		});
+//		List<Post> findAll = repository.findAll(Specification.<Post>where(null).and(specification));
+//		System.out.println(findAll);
+		
 	}
 }

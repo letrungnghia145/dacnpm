@@ -1,4 +1,4 @@
-package com.app.test;
+package com.app.helper;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.MultiValueMap;
 
 import com.app.config.constant.filter.Operator;
 import com.app.model.AbstractModel_;
@@ -25,11 +25,10 @@ import com.app.model.AbstractModel_;
 import lombok.Getter;
 import lombok.Setter;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Getter
 @Setter
-public class Test<T> {
-
+public class Filter<T> {
 	final String PAGE = "page";
 	final String LIMIT = "limit";
 	final String SORT = "sort";
@@ -61,26 +60,24 @@ public class Test<T> {
 		this.pageable = PageRequest.of(page, limit, sort);
 	};
 
-	public Test(MultiValueMap<String, String> filters) {
+	public Filter(Map<String, String> filters) {
 		Map<String, String> paginations = new HashMap<>();
 		filters.forEach((attribute, exp) -> {
 			Specification specification = null;
 			if (attribute.equals(SORT) || attribute.equals(LIMIT) || attribute.equals(PAGE)) {
-				paginations.put(attribute, filters.getFirst(attribute));
+				paginations.put(attribute, exp);
 				return;
 			}
 			try {
-				for (String val : exp) {
-					String[] split = val.split(":");
-					String operator = split[0];
-					String value = split[1];
-					specification = createSpecification(operator, attribute, value);
-				}
+				String[] split = exp.split(":");
+				String operator = split[0];
+				String value = split[1];
+				specification = createSpecification(operator, attribute, value);
 			} catch (Exception e) {
 			}
 			this.specification = this.specification == null ? specification : this.specification.and(specification);
 		});
-//		setPageable(paginations);
+		setPageable(paginations);
 	}
 
 	private Specification<T> createSpecification(String operator, String attribute, String value) throws Exception {

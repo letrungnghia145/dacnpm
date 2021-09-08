@@ -49,9 +49,9 @@ public class Comment extends AbstractModel {
 	private Comment comment;
 
 	@JsonCreator
-	public Comment(String content, Long userId) {
+	public Comment(String content, User author) {
 		super();
 		this.content = content;
-		this.author = new User(userId);
+		this.author = author;
 	}
 }

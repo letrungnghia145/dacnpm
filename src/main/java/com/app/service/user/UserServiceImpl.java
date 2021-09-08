@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = userRepository.count(filters);
-		return new Pagination(data, page, limit, total, Optional.of("users"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = postRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("posts"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = postRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("posts"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override

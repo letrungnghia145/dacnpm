@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.app.helper.Filter;
 import com.app.helper.Mapper;
 import com.app.helper.pagination.Pagination;
 import com.app.model.post.Post;
+import com.app.model.user.Role;
 import com.app.model.user.User;
 import com.app.model.user.User_;
 import com.app.service.user.UserService;
@@ -41,9 +43,14 @@ public class UserControllerV1 implements UserController {
 
 	@Override
 	public ResponseEntity<?> getObject(Long id) {
-		User user = service.getObjectById(id);
-
-		return ResponseEntity.status(HttpStatus.OK).body(Mapper.toMapValue(user, userWithFields));
+		Object data = service.getObjectById(id);
+		boolean check = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+				.contains(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name()));
+		if (!check) {
+			data = Mapper.toMapValue(data, userWithFields);
+		}
+		System.out.println(check);
+		return ResponseEntity.status(HttpStatus.OK).body(data);
 	}
 
 	@Override
@@ -70,7 +77,7 @@ public class UserControllerV1 implements UserController {
 	public ResponseEntity<?> getAllObjects(Map<String, String> filters) {
 		Filter<User> filter = new Filter<>(filters);
 		Pagination allObjects = service.getAllObjects(filter.getSpecification(), filter.getPageable());
-		allObjects.setData(Mapper.toMapValues(allObjects.getData(), userWithFields));
+		allObjects.setData(allObjects.getData());
 		return ResponseEntity.status(HttpStatus.OK).body(allObjects);
 	}
 

@@ -1,7 +1,6 @@
 package com.app.service.comment;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
@@ -46,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = commentRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("comments"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = userRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("users"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -83,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = commentRepository.count(specification);
-		return new Pagination(data, page, limit, total, Optional.of("comments"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override

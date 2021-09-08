@@ -31,8 +31,6 @@ public class PostSerialize extends StdSerializer<Post> {
 		gen.writeStringField(Post_.CONTENT, value.getContent());
 		gen.writeObjectField(Post_.AUTHOR,
 				Mapper.toMapValue(value.getAuthor(), User_.ID, User_.FIRST_NAME, User_.LAST_NAME));
-		gen.writeStringField(Post_.NOTIFY_EMAIL, value.getNotifyEmail());
-		gen.writeStringField(Post_.KEYWORD, value.getKeyword());
 		gen.writeObjectField(Post_.TAGS, value.getTags());
 		gen.writeObjectField(Post_.CREATED_DATE, value.getCreatedDate());
 		gen.writeObjectField(Post_.MODIFIED_DATE, value.getModifiedDate());

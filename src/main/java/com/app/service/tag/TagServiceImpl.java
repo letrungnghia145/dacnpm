@@ -1,7 +1,6 @@
 package com.app.service.tag;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
@@ -36,7 +35,7 @@ public class TagServiceImpl implements TagService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = tagRepository.count(filters);
-		return new Pagination(data, page, limit, total, Optional.of("tags"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class TagServiceImpl implements TagService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = postRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("posts"));
+		return new Pagination(data, page, limit, total);
 	}
 
 }

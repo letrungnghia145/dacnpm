@@ -1,7 +1,6 @@
 package com.app.service.post;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
@@ -47,7 +46,7 @@ public class PostServiceImpl implements PostService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = postRepository.count(specification);
-		return new Pagination(data, page, limit, total, Optional.of("posts"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -81,7 +80,7 @@ public class PostServiceImpl implements PostService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = commentRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("comments"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override
@@ -113,7 +112,7 @@ public class PostServiceImpl implements PostService {
 		long page = pagination.getPageNumber();
 		long limit = pagination.getPageSize();
 		long total = userRepository.count(combine);
-		return new Pagination(data, page, limit, total, Optional.of("users"));
+		return new Pagination(data, page, limit, total);
 	}
 
 	@Override

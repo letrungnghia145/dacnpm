@@ -1,8 +1,6 @@
 package com.app.model.post;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import com.app.model.AbstractModel;
+import com.app.model.Category;
 import com.app.model.tag.Tag;
 import com.app.model.user.User;
 import com.app.serialize.PostSerialize;
@@ -38,12 +37,12 @@ public class Post extends AbstractModel {
 	private Set<Tag> tags = new HashSet<>();
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User author;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Category category;
 	@Column(columnDefinition = "text")
 	private String content;
 	private String keyword;
-	private String notifyEmail;
-	
-	
+
 	@ManyToMany
 	@JoinTable(name = "post_voter", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private Set<User> voters = new HashSet<>();
@@ -53,10 +52,11 @@ public class Post extends AbstractModel {
 	private Set<User> sharers = new HashSet<>();
 
 	@JsonCreator
-	public Post(String title, String content, User user, Set<Tag> tags) {
+	public Post(String title, String content, User user, Set<Tag> tags, Category category) {
 		this.title = title;
 		this.content = content;
 		this.author = user;
 		this.tags = tags;
+		this.category = category;
 	}
 }

@@ -5,9 +5,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.repository.user.UserRepository;
@@ -35,7 +37,8 @@ public class TestController {
 	}
 
 	@GetMapping(value = "/api/v1/test")
-	public ResponseEntity<?> testGetWithId(@RequestBody String test) {
+	public ResponseEntity<?> testGetWithId(@RequestParam MultiValueMap<String, String> test) {
+		System.out.println(test);
 		return ResponseEntity.status(HttpStatus.OK).body(test);
 	};
 
