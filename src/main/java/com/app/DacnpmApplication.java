@@ -9,5 +9,4 @@ public class DacnpmApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DacnpmApplication.class, args);
 	}
-
 }
