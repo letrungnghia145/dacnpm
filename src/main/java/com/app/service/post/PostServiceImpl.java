@@ -117,6 +117,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void deleteAllById(List<Long> ids) {
-		postRepository.deleteAllByIdInBatch(ids);
+		for (Long id : ids) {
+			deleteObjectById(id);
+		}
 	}
 }

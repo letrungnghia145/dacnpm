@@ -26,6 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Category createObject(Category object) {
+		object.getTags().forEach(tag->{
+			tag.setCategory(object);
+		});
 		return categoryRepository.save(object);
 	}
 
