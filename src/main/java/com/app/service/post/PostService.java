@@ -23,6 +23,11 @@ public interface PostService extends CRUDService<Post, Long> {
 
 	public Pagination getPostVoters(Long id, Specification<User> specification, Pageable pagination);
 
+	public Pagination getPostSharers(Long id, Specification<User> specification, Pageable pagination);
+
 	@Transactional
 	public void deleteAllById(List<Long> ids);
+
+	@Transactional
+	public void updateCountViews(Long id, Integer count);
 }

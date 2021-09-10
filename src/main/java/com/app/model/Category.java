@@ -1,5 +1,7 @@
 package com.app.model;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -26,12 +28,12 @@ import lombok.Setter;
 public class Category extends AbstractModel {
 	private String name;
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-	private Set<Post> posts;
+	private Set<Post> posts = new HashSet<>();
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-	private Set<Tag> tags;
+	private List<Tag> tags;
 
 	@JsonCreator
-	public Category(String name, Set<Tag> tags) {
+	public Category(String name, List<Tag> tags) {
 		super();
 		this.name = name;
 		this.tags = tags;

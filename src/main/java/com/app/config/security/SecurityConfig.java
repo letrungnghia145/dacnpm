@@ -58,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("https://dacnpm-dolphin.herokuapp.com/").allowedMethods(METHODS);
+		registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowedMethods(METHODS);
 	}
 
 }

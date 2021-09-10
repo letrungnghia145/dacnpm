@@ -94,8 +94,31 @@ public class PostControllerV1 implements PostController {
 	}
 
 	@Override
+	public ResponseEntity<?> getPostSharers(Long id, Map<String, String> filters) {
+		Filter<User> filter = new Filter<>(filters);
+		Pagination voters = service.getPostSharers(id, filter.getSpecification(), filter.getPageable());
+		List<Map<String, Object>> result = new ArrayList<>();
+		voters.getData().forEach(voter -> {
+			User user = (User) voter;
+			Map<String, Object> map = new HashMap<>();
+			map.put(User_.ID, user.getId());
+			map.put("name", user.getFirstName() + " " + user.getLastName());
+			result.add(map);
+		});
+		voters.setData(result);
+		return ResponseEntity.status(HttpStatus.OK).body(voters);
+	}
+
+	@Override
 	public ResponseEntity<?> deleteAllByIds(Map<String, List<Long>> map) {
 		service.deleteAllById(map.get("ids"));
 		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+	@Override
+	public ResponseEntity<?> updateCountViews(Long id) {
+		final Integer COUNT_VALUE = 1;
+		service.updateCountViews(id, COUNT_VALUE);
+		return ResponseEntity.status(HttpStatus.OK).body(COUNT_VALUE);
 	}
 }

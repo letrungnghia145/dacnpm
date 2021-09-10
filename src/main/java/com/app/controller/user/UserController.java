@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,9 @@ public interface UserController extends CRUDController<User, Long> {
 
 	@PostMapping("/{id}/posts/shared")
 	public ResponseEntity<?> addUserSharedPost(@PathVariable Long id, @RequestBody Post post);
+
+	@DeleteMapping("/{id}/posts/shared")
+	public ResponseEntity<?> removeUserSharedPost(@PathVariable Long id, @RequestBody Post post);
 
 	@GetMapping("/{id}/posts/shared")
 	public ResponseEntity<?> getUserSharedPosts(@PathVariable Long id, @RequestParam Map<String, String> filters);

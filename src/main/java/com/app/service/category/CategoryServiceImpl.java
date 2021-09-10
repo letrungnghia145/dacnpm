@@ -1,5 +1,6 @@
 package com.app.service.category;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.Expression;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.app.helper.Mapper;
 import com.app.helper.pagination.Pagination;
 import com.app.model.Category;
 import com.app.model.Category_;
@@ -26,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Category createObject(Category object) {
-		object.getTags().forEach(tag->{
+		object.getTags().forEach(tag -> {
 			tag.setCategory(object);
 		});
 		return categoryRepository.save(object);
@@ -48,8 +50,32 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Category updateObject(Long id, Category object) {
-		// TODO Auto-generated method stub
-		return null;
+		Category oldCategory = categoryRepository.findById(id).orElseThrow();
+		List<Tag> willRemove = new ArrayList<>();
+		Category convert = Mapper.convert(oldCategory, object);
+		for (Tag tag : oldCategory.getTags()) {
+			boolean flag = false;
+			for (Tag t : object.getTags()) {
+				if (tag.getName().equals(t.getName())) {
+					flag = true;
+					break;
+				}
+			}
+			if (flag) {
+				object.getTags().removeIf(t -> t.getName().equals(tag.getName()));
+			} else {
+				willRemove.add(tag);
+			}
+		}
+		tagRepository.saveAll(object.getTags()).forEach(tag -> {
+			tag.setCategory(oldCategory);
+		});
+		willRemove.forEach(tag -> {
+			tag.getCategory().getTags().remove(tag);
+			tag.setCategory(null);
+		});
+		tagRepository.deleteAll(willRemove);
+		return convert;
 	}
 
 	@Override

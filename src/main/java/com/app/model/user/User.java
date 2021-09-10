@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
@@ -30,7 +29,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @JsonIgnoreProperties({ "commentsWithPost", "postedPosts", "interestingTags", "sharedPosts", "votedPosts" })
 @JsonSerialize(using = UserSerialize.class)
-@ToString
 public class User extends AbstractModel {
 //	private Account account;
 	private String firstName;

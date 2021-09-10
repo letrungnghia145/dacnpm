@@ -43,8 +43,8 @@ public class CategoryControllerV1 implements CategoryController {
 
 	@Override
 	public ResponseEntity<?> updateObject(Long id, Category dto) {
-		// TODO Auto-generated method stub
-		return null;
+		Category updateObject = service.updateObject(id, dto);
+		return ResponseEntity.status(HttpStatus.OK).body(updateObject);
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -29,6 +30,12 @@ public interface PostController extends CRUDController<Post, Long> {
 	@GetMapping("/{id}/voters")
 	public ResponseEntity<?> getPostVoters(@PathVariable Long id, @RequestParam Map<String, String> filters);
 
+	@GetMapping("/{id}/sharers")
+	public ResponseEntity<?> getPostSharers(@PathVariable Long id, @RequestParam Map<String, String> filters);
+
 	@DeleteMapping
 	public ResponseEntity<?> deleteAllByIds(@RequestBody Map<String, List<Long>> map);
+
+	@PutMapping("/{id}/count")
+	public ResponseEntity<?> updateCountViews(@PathVariable Long id);
 }

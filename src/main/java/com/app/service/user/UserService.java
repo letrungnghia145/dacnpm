@@ -18,6 +18,9 @@ public interface UserService extends CRUDService<User, Long> {
 	@Transactional
 	public Post addUserSharedPost(Long id, Post post);
 
+	@Transactional
+	public Post removeUserSharedPost(Long id, Post post);
+
 	public Pagination getUserSharedPosts(Long id, Specification<Post> specification, Pageable pagination);
 
 	public Pagination getUserPosts(Long id, Specification<Post> specification, Pageable pagination);

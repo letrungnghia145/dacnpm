@@ -27,6 +27,7 @@ public class CategorySerialize extends StdSerializer<Category> {
 		gen.writeStringField(Category_.NAME, value.getName());
 		gen.writeObjectField(Category_.CREATED_DATE, value.getCreatedDate());
 		gen.writeObjectField(Category_.MODIFIED_DATE, value.getModifiedDate());
+		gen.writeObjectField(Category_.TAGS, value.getTags());
 		gen.writeEndObject();
 	}
 

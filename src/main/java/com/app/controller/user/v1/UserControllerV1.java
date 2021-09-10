@@ -56,7 +56,13 @@ public class UserControllerV1 implements UserController {
 	@Override
 	public ResponseEntity<?> addUserSharedPost(Long id, Post post) {
 		Post sharedPost = service.addUserSharedPost(id, post);
-		return ResponseEntity.status(HttpStatus.CREATED).body(sharedPost);
+		return ResponseEntity.status(HttpStatus.OK).body(sharedPost);
+	}
+
+	@Override
+	public ResponseEntity<?> removeUserSharedPost(Long id, Post post) {
+		Post removed = service.removeUserSharedPost(id, post);
+		return ResponseEntity.status(HttpStatus.OK).body(removed);
 	}
 
 	@Override

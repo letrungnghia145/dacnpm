@@ -42,6 +42,13 @@ public class Post extends AbstractModel {
 	@Column(columnDefinition = "text")
 	private String content;
 	private String keyword;
+	private int countViews;
+	
+	@Override
+	protected void setWhenPersist() {
+		super.setWhenPersist();
+		this.countViews = 0;
+	}
 
 	@ManyToMany
 	@JoinTable(name = "post_voter", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))

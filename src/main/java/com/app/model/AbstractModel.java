@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AbstractModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

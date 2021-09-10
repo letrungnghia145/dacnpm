@@ -2,6 +2,7 @@ package com.app.service.user;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -139,6 +140,19 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 		User user = userRepository.findUserWithSharedPostsById(id).orElseThrow();
 		user.getSharedPosts().add(post);
 		post.getSharers().add(user);
+		return post;
+	}
+
+	@Override
+	public Post removeUserSharedPost(Long id, Post post) {
+		User user = userRepository.findUserWithSharedPostsById(id).orElseThrow();
+		for (Iterator<Post> iterator = user.getSharedPosts().iterator(); iterator.hasNext();) {
+			Post next = iterator.next();
+			if (next.getId().equals(post.getId())) {
+				iterator.remove();
+				next.getSharers().remove(user);
+			}
+		}
 		return post;
 	}
 

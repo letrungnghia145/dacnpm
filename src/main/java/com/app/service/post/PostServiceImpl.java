@@ -114,11 +114,32 @@ public class PostServiceImpl implements PostService {
 		long total = userRepository.count(combine);
 		return new Pagination(data, page, limit, total);
 	}
+	
+	
+	@Override
+	public Pagination getPostSharers(Long id, Specification<User> specification, Pageable pagination) {
+		Specification<User> spec = (user, query, cb) -> {
+			Root<Post> post = query.from(Post.class);
+			Expression<List<User>> postSharers = post.get(Post_.SHARERS);
+			return cb.and(cb.equal(post.get(Post_.ID), id), cb.isMember(user, postSharers));
+		};
+		Specification<User> combine = spec.and(specification);
+		List<User> data = userRepository.findAll(combine, pagination).getContent();
+		long page = pagination.getPageNumber();
+		long limit = pagination.getPageSize();
+		long total = userRepository.count(combine);
+		return new Pagination(data, page, limit, total);
+	}
 
 	@Override
 	public void deleteAllById(List<Long> ids) {
 		for (Long id : ids) {
 			deleteObjectById(id);
 		}
+	}
+
+	@Override
+	public void updateCountViews(Long id, Integer count) {
+		postRepository.updateCountViews(id, count);
 	}
 }
