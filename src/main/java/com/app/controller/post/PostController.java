@@ -27,6 +27,9 @@ public interface PostController extends CRUDController<Post, Long> {
 	@PostMapping("/{id}/voters")
 	public ResponseEntity<?> addPostVoter(@PathVariable Long id, @RequestBody User voter);
 
+	@DeleteMapping("/{id}/voters")
+	public ResponseEntity<?> removePostVoter(@PathVariable Long id, @RequestBody User voter);
+
 	@GetMapping("/{id}/voters")
 	public ResponseEntity<?> getPostVoters(@PathVariable Long id, @RequestParam Map<String, String> filters);
 

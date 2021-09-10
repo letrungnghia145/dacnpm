@@ -20,6 +20,9 @@ public interface PostService extends CRUDService<Post, Long> {
 
 	@Transactional
 	public User addPostVoter(Long id, User voter);
+	
+	@Transactional
+	public User removePostVoter(Long id, User voter);
 
 	public Pagination getPostVoters(Long id, Specification<User> specification, Pageable pagination);
 

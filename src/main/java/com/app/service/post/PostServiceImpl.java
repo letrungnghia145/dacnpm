@@ -62,6 +62,9 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void deleteObjectById(Long id) {
 		Post post = postRepository.findPostToDeleteById(id).orElseThrow();
+		post.getSharers().forEach(user -> {
+			user.getSharedPosts().remove(post);
+		});
 		post.getTags().forEach(tag -> {
 			tagRepository.decreaseCurrentPostIndex(tag);
 		});
@@ -100,6 +103,14 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	public User removePostVoter(Long id, User voter) {
+		Post post = postRepository.findPostWithVotersById(id).orElseThrow();
+		post.getVoters().remove(voter);
+		voter.getVotedPosts().remove(post);
+		return voter;
+	}
+
+	@Override
 	public Pagination getPostVoters(Long id, Specification<User> specification, Pageable pagination) {
 		Specification<User> spec = (user, query, cb) -> {
 			Root<Post> post = query.from(Post.class);
@@ -114,8 +125,7 @@ public class PostServiceImpl implements PostService {
 		long total = userRepository.count(combine);
 		return new Pagination(data, page, limit, total);
 	}
-	
-	
+
 	@Override
 	public Pagination getPostSharers(Long id, Specification<User> specification, Pageable pagination) {
 		Specification<User> spec = (user, query, cb) -> {

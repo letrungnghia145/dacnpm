@@ -78,6 +78,12 @@ public class PostControllerV1 implements PostController {
 	}
 
 	@Override
+	public ResponseEntity<?> removePostVoter(Long id, User voter) {
+		User result = service.removePostVoter(id, voter);
+		return ResponseEntity.status(HttpStatus.OK).body(result);
+	}
+
+	@Override
 	public ResponseEntity<?> getPostVoters(Long id, Map<String, String> filters) {
 		Filter<User> filter = new Filter<>(filters);
 		Pagination voters = service.getPostVoters(id, filter.getSpecification(), filter.getPageable());
