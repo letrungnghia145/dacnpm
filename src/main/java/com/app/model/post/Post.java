@@ -31,6 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonSerialize(using = PostSerialize.class)
 public class Post extends AbstractModel {
+//	@Column(columnDefinition = "")
 	private String title;
 	@ManyToMany
 	@JoinTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
