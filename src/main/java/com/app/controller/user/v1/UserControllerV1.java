@@ -3,6 +3,8 @@ package com.app.controller.user.v1;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.annotation.security.DenyAll;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,13 @@ import com.app.controller.user.UserController;
 import com.app.helper.AuthUtils;
 import com.app.helper.Filter;
 import com.app.helper.Mapper;
+import com.app.helper.RandomUtils;
 import com.app.helper.pagination.Pagination;
 import com.app.model.post.Post;
 import com.app.model.user.Role;
 import com.app.model.user.User;
 import com.app.model.user.User_;
+import com.app.service.mail.AuthMailService;
 import com.app.service.user.UserService;
 
 @RestController
@@ -32,6 +36,8 @@ public class UserControllerV1 implements UserController {
 	private UserService service;
 	private String[] userWithFields = new String[] { User_.FIRST_NAME, User_.LAST_NAME, User_.CREATED_DATE, User_.AGE,
 			User_.EMAIL };
+	@Autowired
+	private AuthMailService mailService;
 
 	@Override
 	@PreAuthorize("isAuthenticated()")
@@ -107,8 +113,11 @@ public class UserControllerV1 implements UserController {
 	}
 
 	@Override
+	@DenyAll
 	public ResponseEntity<?> changeUserPassword(Map<String, Object> request) throws Exception {
-		String token = AuthUtils.generateAuthInfo(request);
+		String code = RandomUtils.generateValidationCode();
+		mailService.sendValidationCode((String) request.get("email"), code);
+		String token = AuthUtils.generateAuthInfo(request, code);
 		return ResponseEntity.status(HttpStatus.OK).body(token);
 	}
 

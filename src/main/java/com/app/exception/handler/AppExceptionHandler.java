@@ -3,6 +3,8 @@ package com.app.exception.handler;
 import java.util.Date;
 import java.util.NoSuchElementException;
 
+import javax.mail.MessagingException;
+
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -63,6 +65,12 @@ public class AppExceptionHandler {
 	@ExceptionHandler(NullPointerException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public Message getNullPointerException(Exception exception, WebRequest request) {
+		return new Message(exception.getMessage(), request.getContextPath(), new Date());
+	}
+
+	@ExceptionHandler(MessagingException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public Message getMessagingException(Exception exception, WebRequest request) {
 		return new Message(exception.getMessage(), request.getContextPath(), new Date());
 	}
 

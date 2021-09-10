@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,11 @@ import com.app.config.constant.AppConstant;
 import com.app.exception.AuthenticatedException;
 import com.app.helper.AuthUtils;
 import com.app.helper.JwtUtils;
+import com.app.helper.RandomUtils;
+import com.app.helper.token.TokenUtils;
 import com.app.model.user.User;
 import com.app.model.user.User_;
+import com.app.service.mail.AuthMailService;
 import com.app.service.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -30,6 +35,8 @@ public class AuthControllerImpl implements AuthController {
 	private AuthenticationManager authManager;
 	@Autowired
 	private UserService service;
+	@Autowired
+	private AuthMailService mailService;
 
 	@PostMapping("/authenticate")
 	public ResponseEntity<?> authenticate(@RequestBody Map<String, Optional<String>> request)
@@ -56,8 +63,11 @@ public class AuthControllerImpl implements AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> doRegister(@RequestBody Map<String, Object> request) throws JsonProcessingException {
-		String token = AuthUtils.generateAuthInfo(request);
+	public ResponseEntity<?> doRegister(@RequestBody Map<String, Object> request)
+			throws JsonProcessingException, MessagingException {
+		String code = RandomUtils.generateValidationCode();
+		mailService.sendRegisterMail((String) request.get("email"), code);
+		String token = AuthUtils.generateAuthInfo(request, code);
 		return ResponseEntity.status(HttpStatus.OK).body(token);
 	}
 
