@@ -30,6 +30,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 	private JwtTokenFilter jwtTokenFilter;
 	private static final String[] METHODS = new String[] { HttpMethod.GET.name(), HttpMethod.PUT.name(),
 			HttpMethod.POST.name(), HttpMethod.DELETE.name(), };
+	private static final String[] ORIGINS = new String[] { "http://localhost:3000",
+			"https://dacnpm-dolphin.herokuapp.com" };
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -58,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedOrigins("http://localhost:3000").allowedMethods(METHODS);
+		registry.addMapping("/**").allowedOrigins(ORIGINS).allowedMethods(METHODS);
 	}
 
 }
